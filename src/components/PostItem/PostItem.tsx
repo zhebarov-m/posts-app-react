@@ -2,7 +2,7 @@ import styles from './PostItem.module.scss'
 import {classNames} from "../../lib/classNames.ts";
 import {FC} from "react";
 import {Button} from "../UI/button/Button.tsx";
-import {usePosts} from "../../zustand/store.ts";
+import {usePostsStore} from "../../zustand/store.ts";
 
 type tPost = {
     id: number,
@@ -18,7 +18,7 @@ interface PostItemProps {
 
 export const PostItem:FC<PostItemProps> = (props) => {
     const {className, post, index} = props
-    const removePost = usePosts(state => state.removePost)
+    const removePost = usePostsStore(state => state.removePost)
 
     return (
         <div className={classNames(styles.Post, {}, [className!])}>
