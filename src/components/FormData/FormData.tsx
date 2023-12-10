@@ -4,7 +4,7 @@ import {FC, FormEvent, HTMLProps, useState} from "react";
 import {Button} from "../UI/button/Button.tsx";
 import {Input} from "../UI/input/Input.tsx";
 import {Textarea} from "../UI/textarea/Textarea.tsx";
-import {usePosts} from "../../zustand/store.ts";
+import {usePostsStore} from "../../zustand/store.ts";
 
 interface iFormDataProps extends HTMLProps<HTMLFormElement> {
     className?: string
@@ -12,7 +12,8 @@ interface iFormDataProps extends HTMLProps<HTMLFormElement> {
 
 export const FormData: FC<iFormDataProps> = (props) => {
     const {className} = props
-    const addNewPost = usePosts(state => state.addNewPost)
+    const addNewPost = usePostsStore(state => state.addNewPost)
+    const setModal = usePostsStore(state => state.setModal)
     const [formData, setFormData] = useState({ title: '', body: '' });
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -23,6 +24,7 @@ export const FormData: FC<iFormDataProps> = (props) => {
 
         addNewPost(formData)
         setFormData({title: '', body: ''})
+        setModal(false)
     }
 
     return (

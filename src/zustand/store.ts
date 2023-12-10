@@ -1,9 +1,9 @@
-import {create} from "zustand";
-import axios from "axios";
+import {create} from 'zustand';
+import ky from "ky";
 
-const API_URL = 'https://856fab540973ca30.mokky.dev/posts'
+const API_URL = 'https://856fab540973ca30.mokky.dev/posts';
 
-type iPost = {
+export type iPost = {
     id: number;
     title: string;
     body: string;
@@ -11,31 +11,50 @@ type iPost = {
 
 type tPostProps = {
     posts: iPost[];
+    filteredPosts: iPost[];
     title: string;
-    // setPosts: (posts: iPost[]) => void;
-    fetchPosts: () => Promise<void>,
-    addNewPost: (data: {title: string, body: string}) => void,
-    removePost: (post: iPost) => void
+    modal: boolean,
+    setModal: (modal: boolean) => void
+    setPosts: (posts: iPost[]) => void;
+    setFilteredPosts: (filteredPosts: iPost[]) => void;
+    fetchPosts: () => Promise<void>;
+    addNewPost: (data: { title: string; body: string }) => void;
+    removePost: (post: iPost) => void;
 };
 
-export const usePosts = create<tPostProps>((set) => ({
+export const usePostsStore = create<tPostProps>((set) => ({
     posts: [{title: '', id: 0, body: ''}],
+    filteredPosts: [],
     title: 'Список постов',
-    // setPosts: (posts) => set({posts}),
+    modal: false,
+    setModal: (modal: boolean) => set({modal}),
+    setPosts: (posts: iPost[]) => set({posts}),
+    setFilteredPosts: (filteredPosts: iPost[]) => set({ filteredPosts }),
     fetchPosts: async () => {
         try {
-            const {data} = await axios.get(API_URL);
-            set({posts: data});
+            const data: iPost[] = await ky.get(API_URL).json();
+            set({posts: data, filteredPosts: data});
         } catch (error) {
             console.error('Ошибка получения данных', error);
         }
     },
-    addNewPost: (data) => set(state => {
-        const newPost = {id: state.posts[state.posts.length - 1].id + 1 , title: data.title, body: data.body}
+    addNewPost: (data) => {
+        set((state) => {
+            const newPost = {
+                id: state.posts[state.posts.length - 1].id + 1,
+                title: data.title,
+                body: data.body,
+            };
 
-        return {posts: [...state.posts, newPost]}
-    }),
-    removePost: (post) => set(state => {
-        return {posts: state.posts.filter(p => p.id !== post.id)}
-    })
+            return {posts: [...state.posts, newPost], filteredPosts: [...state.filteredPosts, newPost]};
+        })
+    },
+
+    removePost: (post) =>
+        set((state) => {
+            return {
+                posts: state.posts.filter((p) => p.id !== post.id),
+                filteredPosts: state.filteredPosts.filter((p) => p.id !== post.id),
+            };
+        }),
 }));
