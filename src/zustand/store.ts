@@ -11,11 +11,13 @@ export type iPost = {
 
 type tPostProps = {
     posts: iPost[];
+    isLoading: boolean;
     filteredPosts: iPost[];
     title: string;
     modal: boolean,
     setModal: (modal: boolean) => void
     setPosts: (posts: iPost[]) => void;
+    setIsLoading: (isPostLoading: boolean) => void
     setFilteredPosts: (filteredPosts: iPost[]) => void;
     fetchPosts: () => Promise<void>;
     addNewPost: (data: { title: string; body: string }) => void;
@@ -23,17 +25,21 @@ type tPostProps = {
 };
 
 export const usePostsStore = create<tPostProps>((set) => ({
-    posts: [{title: '', id: 0, body: ''}],
+    posts: [],
+    isLoading: true,
     filteredPosts: [],
     title: 'Список постов',
     modal: false,
     setModal: (modal: boolean) => set({modal}),
     setPosts: (posts: iPost[]) => set({posts}),
+    setIsLoading: (isLoading: boolean) => set({isLoading}),
     setFilteredPosts: (filteredPosts: iPost[]) => set({ filteredPosts }),
     fetchPosts: async () => {
         try {
-            const data: iPost[] = await ky.get(API_URL).json();
-            set({posts: data, filteredPosts: data});
+            setTimeout(async () => {
+                const data: iPost[] = await ky.get(API_URL).json();
+                set({posts: data, filteredPosts: data, isLoading: false});
+            }, 1000)
         } catch (error) {
             console.error('Ошибка получения данных', error);
         }

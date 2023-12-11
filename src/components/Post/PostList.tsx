@@ -1,5 +1,5 @@
 // PostList.tsx
-import {FC, useEffect} from 'react';
+import {FC} from 'react';
 import {usePostsStore} from '../../zustand/store.ts';
 import {PostItem} from '../PostItem/PostItem.tsx';
 import styles from './PostList.module.scss';
@@ -14,11 +14,9 @@ interface iPostListProps {
 }
 
 export const PostList: FC<iPostListProps> = ({className}) => {
-    const {filteredPosts, fetchPosts, title} = usePostsStore();
+    const {filteredPosts, title} = usePostsStore();
 
-    useEffect(() => {
-        fetchPosts();
-    }, []);
+
 
     if (!filteredPosts.length) {
         return <h1 className="listEpmty">Список постов пуст</h1>;
