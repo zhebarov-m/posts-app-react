@@ -9,9 +9,12 @@ import {usePosts} from "../hooks/usePosts.ts";
 import {Loader} from "../components/UI/Loader/Loader.tsx";
 
 const HomePage = () => {
-    const {posts, setFilteredPosts, setModal, isLoading, fetchPosts} = usePostsStore((state) => ({
+    const {posts, limit, totalPages, page, setFilteredPosts, setModal, isLoading, fetchPosts} = usePostsStore((state) => ({
         posts: state.posts,
+        limit: state.limit,
+        page: state.page,
         modal: state.modal,
+        totalPages: state.totalPages,
         fetchPosts: state.fetchPosts,
         setModal: state.setModal,
         setFilteredPosts: state.setFilteredPosts,
@@ -19,6 +22,7 @@ const HomePage = () => {
     }));
     const [filter, setFilter] = useState({sort: '', query: ''});
     const filteredPosts = usePosts(posts, filter.sort, filter.query)
+    console.log(totalPages)
 
     useEffect(() => {
         if (filter.query || filter.sort) {
@@ -29,7 +33,7 @@ const HomePage = () => {
     }, [filteredPosts, setFilteredPosts]);
 
     useEffect(() => {
-        fetchPosts();
+        fetchPosts(limit, page)
     }, []);
 
     return (

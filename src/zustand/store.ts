@@ -1,7 +1,7 @@
 import {create} from 'zustand';
-import ky from "ky";
+import axios from "axios";
 
-const API_URL = 'https://856fab540973ca30.mokky.dev/posts';
+const API_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 export type iPost = {
     id: number;
@@ -14,12 +14,18 @@ type tPostProps = {
     isLoading: boolean;
     filteredPosts: iPost[];
     title: string;
+    limit: number,
+    page: number,
     modal: boolean,
+    totalPages: number,
+    setTotalPages: (totalPages: number) => void,
+    setLimit: (limit: number) => void,
+    setPage: (page: number) => void,
     setModal: (modal: boolean) => void
     setPosts: (posts: iPost[]) => void;
     setIsLoading: (isPostLoading: boolean) => void
     setFilteredPosts: (filteredPosts: iPost[]) => void;
-    fetchPosts: () => Promise<void>;
+    fetchPosts: (limit: number, page: number) => Promise<void>;
     addNewPost: (data: { title: string; body: string }) => void;
     removePost: (post: iPost) => void;
 };
@@ -27,18 +33,34 @@ type tPostProps = {
 export const usePostsStore = create<tPostProps>((set) => ({
     posts: [],
     isLoading: true,
+    limit: 10,
+    page: 1,
+    totalPages: 0,
     filteredPosts: [],
     title: 'Список постов',
     modal: false,
+    setLimit: (limit: number) => set({limit}),
+    setPage: (page: number) => set({page}),
     setModal: (modal: boolean) => set({modal}),
     setPosts: (posts: iPost[]) => set({posts}),
+    setTotalPages: (totalPages: number) => set({totalPages}),
     setIsLoading: (isLoading: boolean) => set({isLoading}),
-    setFilteredPosts: (filteredPosts: iPost[]) => set({ filteredPosts }),
-    fetchPosts: async () => {
+    setFilteredPosts: (filteredPosts: iPost[]) => set({filteredPosts}),
+    fetchPosts: async (limit = 10, page = 1) => {
         try {
             setTimeout(async () => {
-                const data: iPost[] = await ky.get(API_URL).json();
-                set({posts: data, filteredPosts: data, isLoading: false});
+                const response = await axios.get(API_URL, {
+                    params: {
+                        _limit: limit,
+                        _page: page,
+                    }
+                });
+                set({
+                    posts: response.data,
+                    filteredPosts: response.data,
+                    isLoading: false,
+                    totalPages: Math.ceil(response.headers['x-total-count'] / limit)
+                });
             }, 1000)
         } catch (error) {
             console.error('Ошибка получения данных', error);
