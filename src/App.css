@@ -31,3 +31,36 @@
     transform: translateX(-350px);
     transition: all 500ms ease-in;
 }
+
+.page__wrapper {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.page__wrapper .page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 40px;
+    height: 40px;
+    border: 1px solid tomato;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.page__wrapper .page:hover {
+    background-color: tomato;
+    transform: scale(1.1);
+}
+
+.page__current {
+    background-color: tomato;
+    font-weight: bold;
+    color: white;
+}

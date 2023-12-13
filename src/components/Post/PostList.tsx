@@ -26,17 +26,16 @@ export const PostList: FC<iPostListProps> = ({className}) => {
         <div className={classNames(styles.Post, {}, [className!])}>
             <h1 className={styles.title}>{title}</h1>
             <TransitionGroup>
-                {filteredPosts.map((post, index) => (
+                {filteredPosts.map((post) => (
                     <CSSTransition
                         key={post.id}
                         timeout={500}
                         classNames="post"
                     >
-                        <PostItem post={post} index={index}/>
+                        <PostItem post={post}/>
                     </CSSTransition>
                 ))}
             </TransitionGroup>
-
         </div>
     );
 };

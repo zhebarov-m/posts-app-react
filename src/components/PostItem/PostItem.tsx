@@ -13,17 +13,16 @@ type tPost = {
 interface PostItemProps {
     className?: string,
     post: tPost,
-    index: number
 }
 
 export const PostItem:FC<PostItemProps> = (props) => {
-    const {className, post, index} = props
+    const {className, post} = props
     const removePost = usePostsStore(state => state.removePost)
 
     return (
         <div className={classNames(styles.Post, {}, [className!])}>
             <div className="postContent">
-                <strong>{index + 1}. {post.title}</strong>
+                <strong>{post.id}. {post.title}</strong>
                 <div>
                     {post.body}
                 </div>

@@ -47,6 +47,9 @@ export const usePostsStore = create<tPostProps>((set) => ({
     setIsLoading: (isLoading: boolean) => set({isLoading}),
     setFilteredPosts: (filteredPosts: iPost[]) => set({filteredPosts}),
     fetchPosts: async (limit = 10, page = 1) => {
+        set({
+            isLoading: true
+        })
         try {
             setTimeout(async () => {
                 const response = await axios.get(API_URL, {
